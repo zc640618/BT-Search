@@ -184,7 +184,7 @@ if (!empty($_GET['magnetbt'])) {
 	
 	<!-- 底部 -->
 	<div class="footer navbar-default">
-			<p>© 2014 BT Wget All Rights Reserved. <a href="Update_records.txt"/>更新记录</a></p>
+			<p>© 2014 BT Wget All Rights Reserved.</p>
 	</div>
 	<!-- 底部结束 -->
 
