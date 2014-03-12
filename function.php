@@ -20,7 +20,7 @@ function Recentsearches() {
 function RecentBT($hava = true, $keyword = NUll) {
 	$medoo = new medoo($GLOBALS['DB']);
 	if ($hava) {
-		$bt_list = $medoo->query("select * from bt_data order by tid asc limit 30")->fetchAll();
+		$bt_list = $medoo->query("select * from bt_data order by tid desc limit 30")->fetchAll();
 	} else {
 		$bt_list = $medoo->select("bt_data", array('name', 'size', 'date', 'url'), array('LIKE' => array('name' => $keyword), 'LIMIT' => '20'));
 	}
