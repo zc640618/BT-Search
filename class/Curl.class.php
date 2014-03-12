@@ -1,4 +1,5 @@
 <?php
+if(!defined('IN_SYS')) { exit('禁止访问'); exit(); }
 /**
  * cURL.php
  * ==============================================
@@ -35,8 +36,9 @@ class cURL {
 		$this->proxy = $proxy;
 		$this->cookies = $cookies;
 		if ($this->cookies == TRUE)
-			$this->cookie ( $cookie );
+			$this->cookie($cookie);
 	}
+
 	/**
 	 * 配置cookie
 	 *
@@ -71,7 +73,6 @@ class cURL {
 		if ($this->proxy)
 			curl_setopt ( $process, CURLOPT_PROXY, $this->proxy );
 		curl_setopt ( $process, CURLOPT_RETURNTRANSFER, 1 );
-		curl_setopt ( $process, CURLOPT_FOLLOWLOCATION, 1 );
 		$return = curl_exec ( $process );
 		curl_close ( $process );
 		return $return;
@@ -109,4 +110,6 @@ class cURL {
 		<center><div style='width:500px;border: 3px solid #FFEEFF; padding: 3px; background-color: #FFDDFF;font-family: verdana; font-size: 10px'><b>cURL Error</b><br>$error</div></center>";
 		die ();
 	}
+
+
 }

@@ -1,42 +1,49 @@
 <?php
+set_time_limit('120');
 include 'function.php';
 
-if (isset($_GET['keyword'])) {
-	$str = $_GET['keyword'];
-	$keyword = urldecode($str);
-} else {
-	header("HTTP/1.1 301 Moved Permanently");
-	header("Location: index.php");
-	exit();
-}
-$url = 'http://www.torrentkitty.com/search/';
-if (!empty($str)) {
-	$medoo = new medoo("bt-wget");
-	$tag = $medoo->insert("bt_tags", array('tags' => $str));
-}
+/**
+* 处理提交过来的关键词
+* 通过则URL编码
+* 不通过则返回301
+*/
 
-$curl = new cURL ();
-$content = $curl->get ( $url . $keyword );
-
-preg_match_all ( "/<tr><td class=\"name\">(.+?)<\/td><\/tr>/ms", $content, $list );
-$lu_list = array ();
-if (is_array ( $list [0] )) {
-	foreach ( $list [0] as $video_list ) {
-		preg_match_all ( "/<td(.[^>]*)>(.+?)<\/td>/ms", $video_list, $video_info );
-		preg_match ( "/href=\"magnet:(.+?)\"/ms", $video_info [2] [3], $magnet_infos );
-		$magnet_url = "magnet:" . $magnet_infos [1];
-		$video = array ();
-		$video ['name'] = $video_info [2] [0];
-		$video ['size'] = $video_info [2] [1];
-		$video ['date'] = $video_info [2] [2];
-		$video ['url'] = $magnet_url;
-		$medoo = new medoo("bt-wget");
-		$bt_info[] = $medoo->insert("bt_data", array('bt_name' => $video['name'], 'bt_size' => $video['size'], 'bt_date' => $video['date'], 'createtime' => date("Y-m-d H:i:s"), 'tag' => $str, 'url' => $video['url']));
-		// var_dump($medoo->error());
+if (!empty($_POST['keyword']) && $_POST['key'] == $key) {
+	$str_temp = strip_tags(trim($_POST['keyword']));
+	if (in_array($str_temp, $badword)) {
+		header('Content-Type: application/json; charset=utf-8');
+	 	echo json_encode(array('Error' => '此关键词被列入黑名单!'));
+		exit();
 	}
-}
+	$keyword = urldecode($str_temp);
+	// 将搜索词写到数据库
+	$medoo = new medoo($GLOBALS['DB']);
+	$medoo->insert("bt_tags", array('tags' => $str_temp));
+	// 计算页数
 
-Header ( "HTTP/1.1 301 Moved Permanently" );
-Header ( "Location: index.php?keyword=$str" );
-exit ();
+	if (!isset($_POST['collpage'])) {
+		$Coll_Page = Counts($keyword);
+	} else {
+		$Coll_Page = '0';
+	}
+
+	// 如果没有指定当前页则默认采集一页
+	if (!empty($_POST['currentpage'])) {
+		$page = intval(trim($_POST['currentpage']));
+		$data = Collection($keyword, '/'.$page);
+		$currentpage = $page;
+	} else {
+		$data = Collection($keyword, '/');
+		$currentpage = '1';
+	}
+	header("Expires: Mon, 26 Jul 1997 05:00:00 GMT"); 
+	header("Last-Modified: ".gmdate("D, d M Y H:i:s")." GMT"); 
+	header("Cache-Control: no-cache, must-revalidate"); 
+	header("Pramga: no-cache");
+	header('Content-Type: application/json; charset=utf-8');
+	echo json_encode(array('keyword' => $keyword, 'collpage' => $Coll_Page, 'currentpage' => $currentpage, 'data' => $data));
+} else {
+	 header('Content-Type: application/json; charset=utf-8');
+	 echo json_encode(array('Error' => 'Null'));
+}
 ?>
