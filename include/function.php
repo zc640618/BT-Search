@@ -49,13 +49,13 @@ function get_hash($magnetic)
 **/
 function get_data($url)
 {
-	$headers = array('Host: torrentkitty.org', 'Content-type: application/x-www-form-urlencoded;charset=UTF-8', 'Connection: Keep-Alive', 'Accept: image/gif, image/x-bitmap, image/jpeg, image/pjpeg');
+	$headers = array('Host: www.torrentkitty.org', 'Content-type: application/x-www-form-urlencoded;charset=UTF-8', 'Connection: Keep-Alive', 'Accept: image/gif, image/x-bitmap, image/jpeg, image/pjpeg');
 	$process = curl_init($url);
 	curl_setopt ($process, CURLOPT_HTTPHEADER, $headers);
 	curl_setopt ($process, CURLOPT_HEADER, 0);
 	// curl_setopt ($process, CURLOPT_PROXY, 'http://88.212.27.27:80');
 	curl_setopt ( $process, CURLOPT_USERAGENT, 'Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.154 Safari/537.36');
-	curl_setopt ($process, CURLOPT_REFERER, "http://torrentkitty.org/search/");
+	curl_setopt ($process, CURLOPT_REFERER, "http://www.torrentkitty.org/search/");
 	curl_setopt ( $process, CURLOPT_RETURNTRANSFER, 1 );
 	curl_setopt ( $process, CURLOPT_TIMEOUT, 15);
 	$return = curl_exec ( $process );
@@ -73,7 +73,7 @@ function get_shahinfo($hash)
 		$cache = phpFastCache("files", array("path"=>"cache"));
 		$conter = $cache->get($hash);
 		if (is_null($conter)) {
-			$url = 'http://torrentkitty.org/information/';
+			$url = 'http://www.torrentkitty.org/information/';
 			$content = get_data($url.$hash);
 			$html = new simple_html_dom();
 			$html->load($content);
@@ -128,7 +128,7 @@ function Curl_content($keyword, $page = '')
 	$cache = phpFastCache("files", array("path"=>"cache"));
 	$htmlconter = $cache->get($keyword.$page);
 	if ($htmlconter == null) {
-		$url = 'http://torrentkitty.org/search/';
+		$url = 'http://www.torrentkitty.org/search/';
 		$content = get_data($url.$keyword.$page);
 		$cache->set($keyword.$page, $content, 2592000);
 		return $content;
