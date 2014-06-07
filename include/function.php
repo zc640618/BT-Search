@@ -200,7 +200,7 @@ function search_log($msg)
 function create_dwz($url)
 {
 	$ch = curl_init();
-	curl_setopt($ch, CURLOPT_URL, 'http://dwz.bt-ss.com/api/create');
+	curl_setopt($ch, CURLOPT_URL, 'http://dwz.soubt.org/api/create/');
 	curl_setopt($ch, CURLOPT_HEADER, 0);
 	curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 	curl_setopt($ch, CURLOPT_POST, 1);
